@@ -6,7 +6,7 @@ enable_testing()
 
 file(GLOB_RECURSE SRCs "./src/*")
 
-add_library(TheNeuralNetwork ${SRCs})
+add_executable(TheNeuralNetwork ${SRCs})
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

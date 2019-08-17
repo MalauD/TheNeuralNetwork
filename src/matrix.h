@@ -3,21 +3,28 @@
 #include <vector>
 #include <functional>
 #include <time.h>
+#include <stdexcept>
 
 class matrix {
     private:
-        int16_t rows,cols;
+        uint16_t rows,cols;
         double **data;
     public:
-        matrix(int16_t rows,int16_t cols);
+        matrix(uint16_t rows,uint16_t cols);
         ~matrix();
+
         static matrix* fromArray(std::vector<double> arr);
-        static matrix randomize(matrix* m);
-        void map(std::function<double(double,int16_t,int16_t)> func);
-        static matrix transpose(matrix* m);
+        static void randomize(matrix* m);
+        
+
         matrix operator+ (const matrix& b);
         matrix operator- (const matrix& b);
         matrix operator* (const matrix& b);
         matrix operator* (const double b);
+
+		void map(std::function<double(double, uint16_t, uint16_t)> func);
         void print();
+		void transpose();
+
+		double** getMatrixArr() const;
 };
