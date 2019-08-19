@@ -41,48 +41,63 @@ std::vector<double> neuralNetwork::predict(std::vector<double> input)
 void neuralNetwork::train(std::vector<double> input, std::vector<double> target, double learningRate)
 {
 	matrix* inputs = matrix::fromArray(input);
-	matrix hiddens = *matrix::dotProduct(weightsIH, inputs);
-	hiddens = hiddens + (*biasH);
+	matrix* hiddens = matrix::dotProduct(weightsIH, inputs);
+	*hiddens = (*hiddens) + (*biasH);
 
-	hiddens.map(activationFunc::sigmoid);
+	hiddens->map(activationFunc::sigmoid);
 
-	matrix outputs = *matrix::dotProduct(weightsHO, &hiddens);
+	matrix* outputs = matrix::dotProduct(weightsHO, hiddens);
 
-	outputs = outputs + (*biasO);
-	outputs.map(activationFunc::sigmoid);
+	*outputs = (*outputs) + (*biasO);
+	outputs->map(activationFunc::sigmoid);
 
-	matrix targets = *matrix::fromArray(target);
+	matrix* targets = matrix::fromArray(target);
 
-	matrix outputError = targets - outputs;
+	matrix outputError = (*targets) - (*outputs);
 
-	matrix gradient = *matrix::map(&outputs, activationFunc::dsigmoid);
-	gradient = gradient * outputError * learningRate;
+	matrix* gradient = matrix::map(outputs, activationFunc::dsigmoid);
+	*gradient = (*gradient) * outputError * learningRate;
 
-	matrix hiddenT = *matrix::transpose(&hiddens);
-
-
-	matrix weightHODelta = *matrix::dotProduct(&gradient,&hiddenT);
-
-	*weightsHO = *weightsHO + weightHODelta;
-	*biasO = *biasO + gradient;
+	matrix* hiddenT = matrix::transpose(hiddens);
 
 
-	matrix whoT = *matrix::transpose(weightsHO);
-	matrix hiddenError = *matrix::dotProduct(&whoT,&outputError);
+	matrix* weightHODelta = matrix::dotProduct(gradient,hiddenT);
+
+	*weightsHO = *weightsHO + (*weightHODelta);
+	*biasO = *biasO + (*gradient);
 
 
-	matrix hiddenGradient = *matrix::map(&hiddens, activationFunc::dsigmoid);
-	hiddenGradient = hiddenGradient * hiddenError * learningRate;
+	matrix* whoT = matrix::transpose(weightsHO);
+	matrix* hiddenError = matrix::dotProduct(whoT,&outputError);
 
 
-	matrix inputT = *matrix::transpose(inputs);
-	matrix weightIHDelta = *matrix::dotProduct(&hiddenGradient, &inputT);
+	matrix* hiddenGradient = matrix::map(hiddens, activationFunc::dsigmoid);
+	*hiddenGradient = (*hiddenGradient) * (*hiddenError) * learningRate;
 
 
-	*weightsIH = *weightsIH + weightIHDelta;
-	*biasH = *biasH + hiddenGradient;
+	matrix* inputT = matrix::transpose(inputs);
+	matrix* weightIHDelta = matrix::dotProduct(hiddenGradient, inputT);
 
-	
+
+	*weightsIH = *weightsIH + (*weightIHDelta);
+	*biasH = *biasH + (*hiddenGradient);
+
+	//delete inputs;
+	//delete outputs;
+	//delete hiddens;
+
+	//delete targets;
+	////delete outputError;
+	//delete gradient;
+
+	//delete hiddenT;
+	//delete weightHODelta;
+	//delete whoT;
+	//delete hiddenError;
+
+	//delete hiddenGradient;
+	//delete inputT;
+	//delete weightIHDelta;
 }
 
 void neuralNetwork::print()

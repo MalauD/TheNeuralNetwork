@@ -15,7 +15,7 @@ int main(){
 	for (int i = 0; i < 100000; i++) {
 		int curRN = rnd(gen);
 
-		nn.train(inputs[curRN], targets[curRN], 0.1);
+		nn.train(inputs[curRN], targets[curRN], 1);
 	}
 
 	nn.print();
