@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "matrix.h"
 #include "activationFunc.h"
+#include <cmath>
 
 class neuralNetwork {
 		uint16_t inputNodes, hiddenNodes, outputNodes;
@@ -9,8 +10,8 @@ class neuralNetwork {
 		neuralNetwork(uint16_t nodesIN, uint16_t nodesHI, uint16_t nodesOU);
 		~neuralNetwork();
 
-		std::vector<double> predict(std::vector<double> input);
+		std::vector<float> predict(std::vector<float> input);
 
-		void train(std::vector<double> input, std::vector<double> target, double learningRate);
+		float train(std::vector<float> input, std::vector<float> target, float learningRate);
 		void print();
 };

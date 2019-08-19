@@ -6,10 +6,10 @@ matrix::matrix(uint16_t rows,uint16_t cols){
     
     srand(time(NULL));
 
-    data = new double* [rows];
+    data = new float* [rows];
 
     for(int i = 0; i < rows; i++){
-        data[i] = new double[cols];
+        data[i] = new float[cols];
         for(int j = 0; j < cols; j++){
             data[i][j] = 0;
         }
@@ -23,18 +23,18 @@ matrix::~matrix(){
     delete [] data;*/
 }
 
-matrix* matrix::fromArray(std::vector<double> arr){
+matrix* matrix::fromArray(std::vector<float> arr){
     auto mT = new matrix(arr.size(),1);
-    mT->map([&ArrayR = arr](double val,uint16_t rows,uint16_t cols){
+    mT->map([&ArrayR = arr](float val,uint16_t rows,uint16_t cols){
         return ArrayR[rows];
     });
     return mT;
 }
 
-std::vector<double> matrix::toArray(matrix* m)
+std::vector<float> matrix::toArray(matrix* m)
 {
-	std::vector<double> v;
-	m->map([a = &v](double val, uint16_t rows, uint16_t cols) {
+	std::vector<float> v;
+	m->map([a = &v](float val, uint16_t rows, uint16_t cols) {
 		a->push_back(val);
 		return val;
 	});
@@ -48,8 +48,8 @@ matrix* matrix::dotProduct(matrix* m1, matrix* m2)
 	}
 
 	matrix* r = new matrix(m1->rows, m2->cols);
-	r->map([a = m1->getMatrixArr(),b = m2->getMatrixArr(),aCols = m1->cols](double val, uint16_t rows, uint16_t cols) {
-		double sum = 0.0;
+	r->map([a = m1->getMatrixArr(),b = m2->getMatrixArr(),aCols = m1->cols](float val, uint16_t rows, uint16_t cols) {
+		float sum = 0.0;
 		for (int k = 0; k < aCols; k++) {
 			sum += a[rows][k] * b[k][cols];
 		}
@@ -58,7 +58,7 @@ matrix* matrix::dotProduct(matrix* m1, matrix* m2)
 	return r;
 }
 
-matrix* matrix::map(matrix* m, std::function<double(double, uint16_t, uint16_t)> func)
+matrix* matrix::map(matrix* m, std::function<float(float, uint16_t, uint16_t)> func)
 {
 	matrix* m2 = m->clone();
 	m2->map(func);
@@ -73,15 +73,15 @@ matrix* matrix::transpose(matrix* m)
 }
 
 void matrix::randomize(matrix* m){
-    m->map([](double val,uint16_t rows,uint16_t cols){
-        return ((double) rand() / RAND_MAX) * 2 - 1; //! rnd number btw -1 and 1
+    m->map([](float val,uint16_t rows,uint16_t cols){
+        return ((float) rand() / RAND_MAX) * 2 - 1; //! rnd number btw -1 and 1
     });
 }
 
-void matrix::map(std::function<double(double,uint16_t,uint16_t)> func){
+void matrix::map(std::function<float(float,uint16_t,uint16_t)> func){
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < cols; j++){
-            double val = data[i][j];
+            float val = data[i][j];
             data[i][j] = func(val,i,j);
         }
     }
@@ -89,7 +89,7 @@ void matrix::map(std::function<double(double,uint16_t,uint16_t)> func){
 
 void matrix::transpose(){
 	matrix* m2 = new matrix(cols, rows);
-	m2->map([arrM = getMatrixArr()](double tval, uint16_t tcols, uint16_t trows) {
+	m2->map([arrM = getMatrixArr()](float tval, uint16_t tcols, uint16_t trows) {
 		return arrM[trows][tcols];
 	});
 	cols = m2->cols;
@@ -103,7 +103,7 @@ matrix matrix::operator+(const matrix & b){
 	}
 	matrix m = matrix(rows, cols);
 
-	m.map([arrA = getMatrixArr(), arrB = b.getMatrixArr()](double tval, uint16_t tcols, uint16_t trows) {
+	m.map([arrA = getMatrixArr(), arrB = b.getMatrixArr()](float tval, uint16_t tcols, uint16_t trows) {
 		return arrA[tcols][trows] + arrB[tcols][trows];
 	});
 	return m;
@@ -116,7 +116,7 @@ matrix matrix::operator+=(const matrix& b)
 	}
 	matrix m = matrix(rows, cols);
 
-	m.map([arrA = getMatrixArr(), arrB = b.getMatrixArr()](double tval, uint16_t tcols, uint16_t trows) {
+	m.map([arrA = getMatrixArr(), arrB = b.getMatrixArr()](float tval, uint16_t tcols, uint16_t trows) {
 		return arrA[tcols][trows] + arrB[tcols][trows];
 	});
 	return m;
@@ -128,7 +128,7 @@ matrix matrix::operator-(const matrix & b){
 	}
 	matrix* m = new matrix(rows, cols);
 
-	m->map([arrA = getMatrixArr(), arrB = b.getMatrixArr()](double tval, uint16_t tcols, uint16_t trows) {
+	m->map([arrA = getMatrixArr(), arrB = b.getMatrixArr()](float tval, uint16_t tcols, uint16_t trows) {
 		return arrA[tcols][trows] - arrB[tcols][trows];
 	});
 	return *m;
@@ -140,16 +140,16 @@ matrix matrix::operator*(const matrix & b){
 	}
 	matrix* m = new matrix(rows, cols);
 
-	m->map([arrA = getMatrixArr(), arrB = b.getMatrixArr()](double tval, uint16_t tcols, uint16_t trows) {
+	m->map([arrA = getMatrixArr(), arrB = b.getMatrixArr()](float tval, uint16_t tcols, uint16_t trows) {
 		return arrA[tcols][trows] * arrB[tcols][trows];
 	});
 	return *m;
 }
 
-matrix matrix::operator*(const double b){
+matrix matrix::operator*(const float b){
 	matrix* m = new matrix(rows, cols);
 
-	m->map([arrA = getMatrixArr(), b](double tval, uint16_t tcols, uint16_t trows) {
+	m->map([arrA = getMatrixArr(), b](float tval, uint16_t tcols, uint16_t trows) {
 		return arrA[tcols][trows] * b;
 	});
 	return *m;
@@ -163,7 +163,7 @@ matrix* matrix::clone()
 void matrix::print(){
     std::cout << "==== " << rows << " x " << cols << " ==== \n";
     
-    map([&c = cols](double tval,uint16_t trows,uint16_t tcols){
+    map([&c = cols](float tval,uint16_t trows,uint16_t tcols){
         std::cout << tval << " ";
         if(tcols == c - 1)
             std::cout << "\n";
@@ -173,7 +173,7 @@ void matrix::print(){
     std::cout << "\n";
 }
 
-double** matrix::getMatrixArr() const
+float** matrix::getMatrixArr() const
 {
 	return data;
 }

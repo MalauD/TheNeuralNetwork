@@ -21,7 +21,7 @@ neuralNetwork::~neuralNetwork()
 {
 }
 
-std::vector<double> neuralNetwork::predict(std::vector<double> input)
+std::vector<float> neuralNetwork::predict(std::vector<float> input)
 {
 	matrix inputs = *matrix::fromArray(input);
 
@@ -38,7 +38,7 @@ std::vector<double> neuralNetwork::predict(std::vector<double> input)
 	return matrix::toArray(&output);
 }
 
-void neuralNetwork::train(std::vector<double> input, std::vector<double> target, double learningRate)
+float neuralNetwork::train(std::vector<float> input, std::vector<float> target, float learningRate)
 {
 	matrix* inputs = matrix::fromArray(input);
 	matrix hiddens = *matrix::dotProduct(weightsIH, inputs);
@@ -55,8 +55,11 @@ void neuralNetwork::train(std::vector<double> input, std::vector<double> target,
 
 	matrix outputError = targets - outputs;
 
+	float errorO = abs(matrix::toArray(&outputError)[0]);
+
 	matrix gradient = *matrix::map(&outputs, activationFunc::dsigmoid);
-	gradient = gradient * outputError * learningRate;
+	gradient = gradient * outputError;
+	gradient = gradient * learningRate;
 
 	matrix hiddenT = *matrix::transpose(&hiddens);
 
@@ -72,8 +75,8 @@ void neuralNetwork::train(std::vector<double> input, std::vector<double> target,
 
 
 	matrix hiddenGradient = *matrix::map(&hiddens, activationFunc::dsigmoid);
-	hiddenGradient = hiddenGradient * hiddenError * learningRate;
-
+	hiddenGradient = hiddenGradient * hiddenError ;
+	hiddenGradient = hiddenGradient * learningRate;
 
 	matrix inputT = *matrix::transpose(inputs);
 	matrix weightIHDelta = *matrix::dotProduct(&hiddenGradient, &inputT);
@@ -82,7 +85,7 @@ void neuralNetwork::train(std::vector<double> input, std::vector<double> target,
 	*weightsIH = *weightsIH + weightIHDelta;
 	*biasH = *biasH + hiddenGradient;
 
-	
+	return errorO;
 }
 
 void neuralNetwork::print()
