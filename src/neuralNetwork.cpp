@@ -47,6 +47,7 @@ void neuralNetwork::train(std::vector<double> input, std::vector<double> target,
 	hiddens.map(activationFunc::sigmoid);
 
 	matrix outputs = *matrix::dotProduct(weightsHO, &hiddens);
+
 	outputs = outputs + (*biasO);
 	outputs.map(activationFunc::sigmoid);
 
@@ -56,9 +57,10 @@ void neuralNetwork::train(std::vector<double> input, std::vector<double> target,
 
 	matrix gradient = *matrix::map(&outputs, activationFunc::dsigmoid);
 	gradient = gradient * outputError * learningRate;
-	
 
 	matrix hiddenT = *matrix::transpose(&hiddens);
+
+
 	matrix weightHODelta = *matrix::dotProduct(&gradient,&hiddenT);
 
 	*weightsHO = *weightsHO + weightHODelta;
@@ -68,11 +70,14 @@ void neuralNetwork::train(std::vector<double> input, std::vector<double> target,
 	matrix whoT = *matrix::transpose(weightsHO);
 	matrix hiddenError = *matrix::dotProduct(&whoT,&outputError);
 
+
 	matrix hiddenGradient = *matrix::map(&hiddens, activationFunc::dsigmoid);
 	hiddenGradient = hiddenGradient * hiddenError * learningRate;
 
+
 	matrix inputT = *matrix::transpose(inputs);
 	matrix weightIHDelta = *matrix::dotProduct(&hiddenGradient, &inputT);
+
 
 	*weightsIH = *weightsIH + weightIHDelta;
 	*biasH = *biasH + hiddenGradient;
